@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 import type { Coach } from "@/lib/data/coaches";
 
-type Params = {
-  params: { slug: string };
-};
-
-export async function GET(_req: Request, { params }: Params) {
-  const slug = decodeURIComponent(params.slug);
+export async function GET(
+  _req: Request,
+  // UPDATE 1: Type the params as a Promise
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  // UPDATE 2: Await the params before using them
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
 
   const { data, error } = await supabase
     .from("coaches")
