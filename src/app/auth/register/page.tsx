@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 type Role = "coach" | "academy";
 
-export default function RegisterPage() {
+// 1. We move your original logic into this inner component
+function RegisterContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -200,5 +201,20 @@ export default function RegisterPage() {
         </p>
       </form>
     </section>
+  );
+}
+
+// 2. The main export wraps the content in Suspense
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center text-slate-400 text-sm">
+          Loading registration...
+        </div>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }
